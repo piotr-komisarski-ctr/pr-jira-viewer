@@ -23,6 +23,7 @@ interface RowDoc {
   pr_branch?: string;
   pr_title?: string;
   pr_state?: string;
+  pr_mergeable?: string;
   source?: string;
   possible_parent?: boolean;
   hint_key?: string;
@@ -148,5 +149,19 @@ export class App implements OnInit {
 
   prStateLabel(state: string | undefined): string {
     return state === 'MERGED-OR-CLOSED' ? 'merged/closed' : (state ?? '');
+  }
+
+  mergeableIcon(value: string | undefined): string {
+    if (value === 'MERGEABLE') return '✓';
+    if (value === 'CONFLICTING') return '✗';
+    if (value === 'UNKNOWN') return '?';
+    return '';
+  }
+
+  mergeableClass(value: string | undefined): string {
+    if (value === 'MERGEABLE') return 'm ok';
+    if (value === 'CONFLICTING') return 'm bad';
+    if (value === 'UNKNOWN') return 'm unk';
+    return 'm';
   }
 }

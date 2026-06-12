@@ -37,7 +37,7 @@
       <h2>✅ Matched <span class="cnt">{{ matched.length }}</span></h2>
       <table class="t">
         <thead>
-          <tr><th>Jira</th><th>Type</th><th>Status</th><th>Title</th><th>PR</th><th>PR state</th></tr>
+          <tr><th>Jira</th><th>Type</th><th>Status</th><th>Title</th><th>PR</th><th>PR state</th><th>Mergeable</th></tr>
         </thead>
         <tbody>
           @for (r of matched; track r.jira_key + (r.pr_url ?? '')) {
@@ -57,6 +57,7 @@
                   <span class="warn" title="branch carries the umbrella key — PR may belong to a subtask">⚠</span>
                 }
               </td>
+              <td><span [class]="mergeableClass(r.pr_mergeable)" [title]="r.pr_mergeable ?? ''">{{ mergeableIcon(r.pr_mergeable) }}</span></td>
             </tr>
           }
         </tbody>
@@ -86,7 +87,7 @@
       <h2>🔵 PRs without Jira <span class="cnt">{{ prOnly.length }}</span></h2>
       <table class="t">
         <thead>
-          <tr><th>PR</th><th>Repo</th><th>Branch</th><th>PR title</th><th>Hint</th></tr>
+          <tr><th>PR</th><th>Repo</th><th>Branch</th><th>PR title</th><th>Mergeable</th><th>Hint</th></tr>
         </thead>
         <tbody>
           @for (r of prOnly; track r.pr_url) {
@@ -95,6 +96,7 @@
               <td>{{ r.pr_repo }}</td>
               <td>{{ r.pr_branch }}</td>
               <td class="wrap">{{ r.pr_title }}</td>
+              <td><span [class]="mergeableClass(r.pr_mergeable)" [title]="r.pr_mergeable ?? ''">{{ mergeableIcon(r.pr_mergeable) }}</span></td>
               <td>
                 @if (r.hint_key) {
                   <a class="l" [href]="jiraUrl(r.hint_key)" target="_blank" rel="noopener">{{ r.hint_key }}</a>

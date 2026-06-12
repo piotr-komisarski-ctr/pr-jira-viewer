@@ -67,3 +67,8 @@ a.l:hover { text-decoration: underline; }
 .c.mrg { background: #ede9fe; color: #5b21b6; }
 
 .warn { color: #b45309; font-size: 12px; margin-left: 4px; cursor: help; }
+
+.m { font-size: 13px; font-weight: 700; }
+.m.ok { color: #16a34a; }
+.m.bad { color: #dc2626; }
+.m.unk { color: #9ca3af; font-weight: 600; }
