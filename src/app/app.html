@@ -42,13 +42,13 @@
         <tbody>
           @for (r of matched; track r.jira_key + (r.pr_url ?? '')) {
             <tr>
-              <td><a class="l" [href]="jiraUrl(r.jira_key)" target="_blank">{{ r.jira_key }}</a></td>
+              <td><a class="l" [href]="jiraUrl(r.jira_key)" target="_blank" rel="noopener">{{ r.jira_key }}</a></td>
               <td>{{ r.jira_type }}</td>
               <td><span [class]="statusClass(r.jira_status)">{{ r.jira_status }}</span></td>
               <td class="wrap">{{ r.jira_summary }}</td>
               <td>
                 @if (r.pr_url) {
-                  <a class="l" [href]="r.pr_url" target="_blank">{{ prLabel(r) }}</a>
+                  <a class="l" [href]="r.pr_url" target="_blank" rel="noopener">{{ prLabel(r) }}</a>
                 }
               </td>
               <td>
@@ -72,7 +72,7 @@
         <tbody>
           @for (r of jiraOnly; track r.jira_key) {
             <tr>
-              <td><a class="l" [href]="jiraUrl(r.jira_key)" target="_blank">{{ r.jira_key }}</a></td>
+              <td><a class="l" [href]="jiraUrl(r.jira_key)" target="_blank" rel="noopener">{{ r.jira_key }}</a></td>
               <td>{{ r.jira_type }}</td>
               <td><span [class]="statusClass(r.jira_status)">{{ r.jira_status }}</span></td>
               <td class="wrap">{{ r.jira_summary }}</td>
@@ -91,13 +91,13 @@
         <tbody>
           @for (r of prOnly; track r.pr_url) {
             <tr>
-              <td><a class="l" [href]="r.pr_url" target="_blank">{{ prLabel(r) }}</a></td>
+              <td><a class="l" [href]="r.pr_url" target="_blank" rel="noopener">{{ prLabel(r) }}</a></td>
               <td>{{ r.pr_repo }}</td>
               <td>{{ r.pr_branch }}</td>
               <td class="wrap">{{ r.pr_title }}</td>
               <td>
                 @if (r.hint_key) {
-                  <a class="l" [href]="jiraUrl(r.hint_key)" target="_blank">{{ r.hint_key }}</a>
+                  <a class="l" [href]="jiraUrl(r.hint_key)" target="_blank" rel="noopener">{{ r.hint_key }}</a>
                 } @else { - }
               </td>
             </tr>

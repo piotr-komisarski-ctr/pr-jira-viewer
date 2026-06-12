@@ -77,7 +77,9 @@ export class App implements OnInit {
         this.cd.detectChanges();
       },
       error: (err) => {
-        this.errorMsg = `Fetch failed — connect to VPN and retry. (${err?.message ?? err})`;
+        this.errorMsg = err?.status === 404
+          ? 'Index not found — has the export run yet?'
+          : `Fetch failed — connect to VPN and retry. (${err?.message ?? err})`;
         this.loading = false;
         this.cd.detectChanges();
       },
