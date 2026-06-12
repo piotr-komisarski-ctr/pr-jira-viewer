@@ -1,1 +1,109 @@
-<div class="page"><h1>PR ↔ Jira Viewer</h1></div>
+<div class="page">
+  <header class="header">
+    <h1>PR ↔ Jira Viewer</h1>
+    <p class="subtitle">
+      Active Jira tickets paired with open GitHub PRs. Data from
+      <code>pr-jira-map-1</code> (DXO dev, VPN required) — snapshot as of the
+      last export.
+    </p>
+  </header>
+
+  @if (errorMsg) {
+    <div class="error">{{ errorMsg }}</div>
+  }
+  @if (loading) {
+    <div class="loading">Loading…</div>
+  }
+
+  @if (!loading && !errorMsg) {
+    <div class="toolbar">
+      <div class="filter">
+        <label>Person</label>
+        <select [(ngModel)]="selectedPerson" (change)="applySelection()">
+          @for (p of persons; track p.person) {
+            <option [value]="p.person">{{ p.label }}</option>
+          }
+        </select>
+      </div>
+      <span class="updated">Last export: <b>{{ runTs }}</b></span>
+      <span class="spacer"></span>
+      <span class="pill">Matched <b>{{ matched.length }}</b></span>
+      <span class="pill">Jira without PR <b>{{ jiraOnly.length }}</b></span>
+      <span class="pill">PRs without Jira <b>{{ prOnly.length }}</b></span>
+      <span class="pill">Open PRs <b>{{ openPrCount }}</b></span>
+    </div>
+
+    <section class="sec">
+      <h2>✅ Matched <span class="cnt">{{ matched.length }}</span></h2>
+      <table class="t">
+        <thead>
+          <tr><th>Jira</th><th>Type</th><th>Status</th><th>Title</th><th>PR</th><th>PR state</th></tr>
+        </thead>
+        <tbody>
+          @for (r of matched; track r.jira_key + (r.pr_url ?? '')) {
+            <tr>
+              <td><a class="l" [href]="jiraUrl(r.jira_key)" target="_blank">{{ r.jira_key }}</a></td>
+              <td>{{ r.jira_type }}</td>
+              <td><span [class]="statusClass(r.jira_status)">{{ r.jira_status }}</span></td>
+              <td class="wrap">{{ r.jira_summary }}</td>
+              <td>
+                @if (r.pr_url) {
+                  <a class="l" [href]="r.pr_url" target="_blank">{{ prLabel(r) }}</a>
+                }
+              </td>
+              <td>
+                <span [class]="prStateClass(r.pr_state)">{{ prStateLabel(r.pr_state) }}</span>
+                @if (r.possible_parent) {
+                  <span class="warn" title="branch carries the umbrella key — PR may belong to a subtask">⚠</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+
+    <section class="sec">
+      <h2>🟡 Jira without PR <span class="cnt">{{ jiraOnly.length }}</span></h2>
+      <table class="t">
+        <thead>
+          <tr><th>Jira</th><th>Type</th><th>Status</th><th>Title</th></tr>
+        </thead>
+        <tbody>
+          @for (r of jiraOnly; track r.jira_key) {
+            <tr>
+              <td><a class="l" [href]="jiraUrl(r.jira_key)" target="_blank">{{ r.jira_key }}</a></td>
+              <td>{{ r.jira_type }}</td>
+              <td><span [class]="statusClass(r.jira_status)">{{ r.jira_status }}</span></td>
+              <td class="wrap">{{ r.jira_summary }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+
+    <section class="sec">
+      <h2>🔵 PRs without Jira <span class="cnt">{{ prOnly.length }}</span></h2>
+      <table class="t">
+        <thead>
+          <tr><th>PR</th><th>Repo</th><th>Branch</th><th>PR title</th><th>Hint</th></tr>
+        </thead>
+        <tbody>
+          @for (r of prOnly; track r.pr_url) {
+            <tr>
+              <td><a class="l" [href]="r.pr_url" target="_blank">{{ prLabel(r) }}</a></td>
+              <td>{{ r.pr_repo }}</td>
+              <td>{{ r.pr_branch }}</td>
+              <td class="wrap">{{ r.pr_title }}</td>
+              <td>
+                @if (r.hint_key) {
+                  <a class="l" [href]="jiraUrl(r.hint_key)" target="_blank">{{ r.hint_key }}</a>
+                } @else { - }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  }
+</div>

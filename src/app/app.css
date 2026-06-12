@@ -1,1 +1,69 @@
+:host {
+  display: block;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #1f2937;
+}
+
 .page { max-width: 1400px; margin: 0 auto; padding: 16px 20px 40px; }
+
+.header { margin-bottom: 16px; }
+.header h1 { font-size: 22px; margin: 0 0 4px; }
+.subtitle { font-size: 12.5px; color: #6b7280; margin: 0; }
+.subtitle code { font-size: 12px; background: #f3f4f6; padding: 1px 4px; border-radius: 3px; }
+
+.loading { font-size: 13px; color: #6b7280; padding: 12px 0; }
+.error {
+  background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;
+  border-radius: 6px; padding: 8px 12px; font-size: 12.5px; margin-bottom: 12px;
+}
+
+.toolbar {
+  display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  padding: 10px 12px; background: #f9fafb; border: 1px solid #e5e7eb;
+  border-radius: 6px; margin-bottom: 16px; font-size: 12px;
+}
+.filter { display: flex; flex-direction: column; font-size: 12px; }
+.filter label { color: #6b7280; margin-bottom: 4px; }
+.filter select {
+  padding: 4px 6px; font-size: 13px; border: 1px solid #d1d5db;
+  border-radius: 4px; background: white; min-width: 200px;
+}
+.updated { color: #6b7280; }
+.spacer { flex: 1; }
+.pill {
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 999px;
+  padding: 3px 11px; font-weight: 600; font-size: 11.5px; color: #374151;
+}
+.pill b { color: #2563eb; }
+
+.sec { margin-top: 20px; }
+.sec h2 { font-size: 14px; margin: 0 0 6px; display: flex; align-items: center; gap: 7px; }
+.cnt {
+  background: #eef2ff; color: #4338ca; border-radius: 999px;
+  font-size: 11px; padding: 1px 8px; font-weight: 700;
+}
+
+table.t { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.t th {
+  text-align: left; font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.03em; color: #6b7280; border-bottom: 2px solid #e5e7eb;
+  padding: 6px 8px;
+}
+.t td { padding: 6px 8px; border-bottom: 1px solid #f3f4f6; white-space: nowrap; }
+.t td.wrap { white-space: normal; color: #4b5563; }
+.t tbody tr:hover td { background: #f9fafb; }
+
+a.l { color: #2563eb; text-decoration: none; font-weight: 600; }
+a.l:hover { text-decoration: underline; }
+
+.c {
+  display: inline-block; padding: 1px 8px; border-radius: 999px;
+  font-size: 11px; font-weight: 600;
+}
+.c.cr { background: #fef3c7; color: #92400e; }
+.c.ip { background: #d1fae5; color: #065f46; }
+.c.bl { background: #f3f4f6; color: #4b5563; }
+.c.open { background: #dbeafe; color: #1e40af; }
+.c.mrg { background: #ede9fe; color: #5b21b6; }
+
+.warn { color: #b45309; font-size: 12px; margin-left: 4px; cursor: help; }
