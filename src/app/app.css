@@ -72,3 +72,7 @@ a.l:hover { text-decoration: underline; }
 .m.ok { color: #16a34a; }
 .m.bad { color: #dc2626; }
 .m.unk { color: #9ca3af; font-weight: 600; }
+
+.r { font-size: 12px; font-weight: 600; white-space: nowrap; }
+.r.need { color: #dc2626; font-weight: 700; }
+.r.ok { color: #16a34a; }

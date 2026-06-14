@@ -24,6 +24,7 @@ interface RowDoc {
   pr_title?: string;
   pr_state?: string;
   pr_mergeable?: string;
+  pr_needs_reply?: number;
   source?: string;
   possible_parent?: boolean;
   hint_key?: string;
@@ -163,5 +164,22 @@ export class App implements OnInit {
     if (value === 'CONFLICTING') return 'm bad';
     if (value === 'UNKNOWN') return 'm unk';
     return 'm';
+  }
+
+  needsReplyIcon(n: number | undefined): string {
+    if (n === undefined || n === null) return '';
+    return n > 0 ? `💬 ${n}` : '✓';
+  }
+
+  needsReplyClass(n: number | undefined): string {
+    if (n === undefined || n === null) return 'r';
+    return n > 0 ? 'r need' : 'r ok';
+  }
+
+  needsReplyTitle(n: number | undefined): string {
+    if (n === undefined || n === null) return '';
+    return n > 0
+      ? `${n} unresolved thread(s) awaiting your reply`
+      : 'no comments awaiting your reply';
   }
 }
