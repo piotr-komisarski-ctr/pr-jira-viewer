@@ -37,7 +37,7 @@
       <h2>✅ Matched <span class="cnt">{{ matched.length }}</span></h2>
       <table class="t">
         <thead>
-          <tr><th>Jira</th><th>Type</th><th>Status</th><th>Title</th><th>PR</th><th>PR state</th><th>Mergeable</th><th>Reply?</th></tr>
+          <tr><th>Jira</th><th>Type</th><th>Status</th><th>Title</th><th>PR</th><th>PR state</th><th>Mergeable</th><th>Reply?</th><th>CI</th></tr>
         </thead>
         <tbody>
           @for (r of matched; track r.jira_key + (r.pr_url ?? '')) {
@@ -59,6 +59,7 @@
               </td>
               <td><span [class]="mergeableClass(r.pr_mergeable)" [title]="r.pr_mergeable ?? ''">{{ mergeableIcon(r.pr_mergeable) }}</span></td>
               <td><span [class]="needsReplyClass(r.pr_needs_reply)" [title]="needsReplyTitle(r.pr_needs_reply)">{{ needsReplyIcon(r.pr_needs_reply) }}</span></td>
+              <td><span [class]="ciClass(r.pr_ci_failures, r.pr_ci_pending)" [title]="ciTitle(r.pr_ci_failures, r.pr_ci_pending)">{{ ciIcon(r.pr_ci_failures, r.pr_ci_pending) }}</span></td>
             </tr>
           }
         </tbody>
@@ -88,7 +89,7 @@
       <h2>🔵 PRs without Jira <span class="cnt">{{ prOnly.length }}</span></h2>
       <table class="t">
         <thead>
-          <tr><th>PR</th><th>Repo</th><th>Branch</th><th>PR title</th><th>Mergeable</th><th>Reply?</th><th>Hint</th></tr>
+          <tr><th>PR</th><th>Repo</th><th>Branch</th><th>PR title</th><th>Mergeable</th><th>Reply?</th><th>CI</th><th>Hint</th></tr>
         </thead>
         <tbody>
           @for (r of prOnly; track r.pr_url) {
@@ -99,6 +100,7 @@
               <td class="wrap">{{ r.pr_title }}</td>
               <td><span [class]="mergeableClass(r.pr_mergeable)" [title]="r.pr_mergeable ?? ''">{{ mergeableIcon(r.pr_mergeable) }}</span></td>
               <td><span [class]="needsReplyClass(r.pr_needs_reply)" [title]="needsReplyTitle(r.pr_needs_reply)">{{ needsReplyIcon(r.pr_needs_reply) }}</span></td>
+              <td><span [class]="ciClass(r.pr_ci_failures, r.pr_ci_pending)" [title]="ciTitle(r.pr_ci_failures, r.pr_ci_pending)">{{ ciIcon(r.pr_ci_failures, r.pr_ci_pending) }}</span></td>
               <td>
                 @if (r.hint_key) {
                   <a class="l" [href]="jiraUrl(r.hint_key)" target="_blank" rel="noopener">{{ r.hint_key }}</a>

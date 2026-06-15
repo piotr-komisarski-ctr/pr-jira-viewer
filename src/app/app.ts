@@ -25,6 +25,8 @@ interface RowDoc {
   pr_state?: string;
   pr_mergeable?: string;
   pr_needs_reply?: number;
+  pr_ci_failures?: number;
+  pr_ci_pending?: number;
   source?: string;
   possible_parent?: boolean;
   hint_key?: string;
@@ -181,5 +183,26 @@ export class App implements OnInit {
     return n > 0
       ? `${n} unresolved thread(s) awaiting your reply`
       : 'no comments awaiting your reply';
+  }
+
+  ciIcon(failures: number | undefined, pending: number | undefined): string {
+    if (failures === undefined || failures === null) return '';
+    if (failures > 0) return `✗ ${failures}`;
+    if (pending && pending > 0) return '…';
+    return '✓';
+  }
+
+  ciClass(failures: number | undefined, pending: number | undefined): string {
+    if (failures === undefined || failures === null) return 'ci';
+    if (failures > 0) return 'ci bad';
+    if (pending && pending > 0) return 'ci pend';
+    return 'ci ok';
+  }
+
+  ciTitle(failures: number | undefined, pending: number | undefined): string {
+    if (failures === undefined || failures === null) return '';
+    if (failures > 0) return `${failures} failing CI check(s)`;
+    if (pending && pending > 0) return `${pending} CI check(s) still running`;
+    return 'all CI checks passing';
   }
 }
