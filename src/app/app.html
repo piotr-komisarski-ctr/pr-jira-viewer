@@ -58,7 +58,12 @@
                 }
               </td>
               <td><span [class]="mergeableClass(r.pr_mergeable)" [title]="r.pr_mergeable ?? ''">{{ mergeableIcon(r.pr_mergeable) }}</span></td>
-              <td><span [class]="needsReplyClass(r.pr_needs_reply)" [title]="needsReplyTitle(r.pr_needs_reply)">{{ needsReplyIcon(r.pr_needs_reply) }}</span></td>
+              <td>
+                <span [class]="needsReplyClass(r.pr_needs_reply)" [title]="needsReplyTitle(r.pr_needs_reply)">{{ needsReplyIcon(r.pr_needs_reply) }}</span>
+                @if (r.pr_needs_reply_from) {
+                  <span class="who">{{ r.pr_needs_reply_from }}</span>
+                }
+              </td>
               <td><span [class]="ciClass(r.pr_ci_failures, r.pr_ci_pending, r.pr_ci_expected)" [title]="ciTitle(r.pr_ci_failures, r.pr_ci_pending, r.pr_ci_expected)">{{ ciIcon(r.pr_ci_failures, r.pr_ci_pending, r.pr_ci_expected) }}</span></td>
               <td><span [class]="approvedClass(r.pr_approved_by, r.pr_review_decision)" [title]="approvedTitle(r.pr_approved_by, r.pr_review_decision)">{{ approvedIcon(r.pr_approved_by, r.pr_review_decision) }}</span></td>
             </tr>
@@ -100,7 +105,12 @@
               <td>{{ r.pr_branch }}</td>
               <td class="wrap">{{ r.pr_title }}</td>
               <td><span [class]="mergeableClass(r.pr_mergeable)" [title]="r.pr_mergeable ?? ''">{{ mergeableIcon(r.pr_mergeable) }}</span></td>
-              <td><span [class]="needsReplyClass(r.pr_needs_reply)" [title]="needsReplyTitle(r.pr_needs_reply)">{{ needsReplyIcon(r.pr_needs_reply) }}</span></td>
+              <td>
+                <span [class]="needsReplyClass(r.pr_needs_reply)" [title]="needsReplyTitle(r.pr_needs_reply)">{{ needsReplyIcon(r.pr_needs_reply) }}</span>
+                @if (r.pr_needs_reply_from) {
+                  <span class="who">{{ r.pr_needs_reply_from }}</span>
+                }
+              </td>
               <td><span [class]="ciClass(r.pr_ci_failures, r.pr_ci_pending, r.pr_ci_expected)" [title]="ciTitle(r.pr_ci_failures, r.pr_ci_pending, r.pr_ci_expected)">{{ ciIcon(r.pr_ci_failures, r.pr_ci_pending, r.pr_ci_expected) }}</span></td>
               <td><span [class]="approvedClass(r.pr_approved_by, r.pr_review_decision)" [title]="approvedTitle(r.pr_approved_by, r.pr_review_decision)">{{ approvedIcon(r.pr_approved_by, r.pr_review_decision) }}</span></td>
               <td>

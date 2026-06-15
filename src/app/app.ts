@@ -25,6 +25,7 @@ interface RowDoc {
   pr_state?: string;
   pr_mergeable?: string;
   pr_needs_reply?: number;
+  pr_needs_reply_from?: string;
   pr_ci_failures?: number;
   pr_ci_pending?: number;
   pr_ci_expected?: number;
