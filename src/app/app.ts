@@ -182,7 +182,7 @@ export class App implements OnInit {
   needsReplyTitle(n: number | undefined): string {
     if (n === undefined || n === null) return '';
     return n > 0
-      ? `${n} unresolved thread(s) awaiting your reply`
+      ? `${n} comment(s)/thread(s) awaiting your reply`
       : 'no comments awaiting your reply';
   }
 
