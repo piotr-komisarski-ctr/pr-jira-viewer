@@ -28,6 +28,8 @@ interface RowDoc {
   pr_ci_failures?: number;
   pr_ci_pending?: number;
   pr_ci_expected?: number;
+  pr_approved_by?: string;
+  pr_review_decision?: string;
   source?: string;
   possible_parent?: boolean;
   hint_key?: string;
@@ -214,6 +216,30 @@ export class App implements OnInit {
     if (expected && expected > 0) bits.push(`${expected} required check(s) not started yet`);
     if (pending && pending > 0) bits.push(`${pending} check(s) running`);
     return bits.length ? bits.join('; ') : 'all CI checks passing';
+  }
+
+  approvedIcon(approvedBy: string | undefined, decision: string | undefined): string {
+    if (approvedBy) {
+      const names = approvedBy.split(',');
+      return names.length > 1 ? `✓ ${names[0]} +${names.length - 1}` : `✓ ${names[0]}`;
+    }
+    if (decision === 'CHANGES_REQUESTED') return '✗ changes';
+    if (decision) return '— not yet';
+    return '';
+  }
+
+  approvedClass(approvedBy: string | undefined, decision: string | undefined): string {
+    if (approvedBy) return 'ap ok';
+    if (decision === 'CHANGES_REQUESTED') return 'ap bad';
+    if (decision) return 'ap none';
+    return 'ap';
+  }
+
+  approvedTitle(approvedBy: string | undefined, decision: string | undefined): string {
+    const bits: string[] = [];
+    if (approvedBy) bits.push(`approved by ${approvedBy.split(',').join(', ')}`);
+    if (decision) bits.push(`review decision: ${decision}`);
+    return bits.join('; ');
   }
 
   // run_ts is stored UTC as "YYYY-MM-DDTHH:MM:SSZ" -> "YYYY-MM-DD HH:MM UTC".

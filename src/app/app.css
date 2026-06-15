@@ -82,3 +82,7 @@ a.l:hover { text-decoration: underline; }
 .ci.exp { color: #b45309; }
 .ci.pend { color: #9ca3af; }
 .ci.ok { color: #16a34a; }
+.ap { font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+.ap.ok { color: #16a34a; }
+.ap.bad { color: #dc2626; }
+.ap.none { color: #9ca3af; }
