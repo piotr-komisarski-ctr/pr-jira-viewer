@@ -205,4 +205,10 @@ export class App implements OnInit {
     if (pending && pending > 0) return `${pending} CI check(s) still running`;
     return 'all CI checks passing';
   }
+
+  // run_ts is stored UTC as "YYYY-MM-DDTHH:MM:SSZ" -> "YYYY-MM-DD HH:MM UTC".
+  formatExportTs(ts: string | undefined): string {
+    if (!ts) return '';
+    return ts.slice(0, 16).replace('T', ' ') + ' UTC';
+  }
 }

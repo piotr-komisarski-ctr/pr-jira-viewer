@@ -25,7 +25,7 @@
           }
         </select>
       </div>
-      <span class="updated">Last export: <b>{{ runTs }}</b></span>
+      <span class="updated">Last export: <b>{{ formatExportTs(runTs) }}</b></span>
       <span class="spacer"></span>
       <span class="pill">Matched <b>{{ matched.length }}</b></span>
       <span class="pill">Jira without PR <b>{{ jiraOnly.length }}</b></span>
