@@ -59,7 +59,7 @@
               </td>
               <td><span [class]="mergeableClass(r.pr_mergeable)" [title]="r.pr_mergeable ?? ''">{{ mergeableIcon(r.pr_mergeable) }}</span></td>
               <td><span [class]="needsReplyClass(r.pr_needs_reply)" [title]="needsReplyTitle(r.pr_needs_reply)">{{ needsReplyIcon(r.pr_needs_reply) }}</span></td>
-              <td><span [class]="ciClass(r.pr_ci_failures, r.pr_ci_pending)" [title]="ciTitle(r.pr_ci_failures, r.pr_ci_pending)">{{ ciIcon(r.pr_ci_failures, r.pr_ci_pending) }}</span></td>
+              <td><span [class]="ciClass(r.pr_ci_failures, r.pr_ci_pending, r.pr_ci_expected)" [title]="ciTitle(r.pr_ci_failures, r.pr_ci_pending, r.pr_ci_expected)">{{ ciIcon(r.pr_ci_failures, r.pr_ci_pending, r.pr_ci_expected) }}</span></td>
             </tr>
           }
         </tbody>
@@ -100,7 +100,7 @@
               <td class="wrap">{{ r.pr_title }}</td>
               <td><span [class]="mergeableClass(r.pr_mergeable)" [title]="r.pr_mergeable ?? ''">{{ mergeableIcon(r.pr_mergeable) }}</span></td>
               <td><span [class]="needsReplyClass(r.pr_needs_reply)" [title]="needsReplyTitle(r.pr_needs_reply)">{{ needsReplyIcon(r.pr_needs_reply) }}</span></td>
-              <td><span [class]="ciClass(r.pr_ci_failures, r.pr_ci_pending)" [title]="ciTitle(r.pr_ci_failures, r.pr_ci_pending)">{{ ciIcon(r.pr_ci_failures, r.pr_ci_pending) }}</span></td>
+              <td><span [class]="ciClass(r.pr_ci_failures, r.pr_ci_pending, r.pr_ci_expected)" [title]="ciTitle(r.pr_ci_failures, r.pr_ci_pending, r.pr_ci_expected)">{{ ciIcon(r.pr_ci_failures, r.pr_ci_pending, r.pr_ci_expected) }}</span></td>
               <td>
                 @if (r.hint_key) {
                   <a class="l" [href]="jiraUrl(r.hint_key)" target="_blank" rel="noopener">{{ r.hint_key }}</a>

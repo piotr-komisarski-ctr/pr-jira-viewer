@@ -27,6 +27,7 @@ interface RowDoc {
   pr_needs_reply?: number;
   pr_ci_failures?: number;
   pr_ci_pending?: number;
+  pr_ci_expected?: number;
   source?: string;
   possible_parent?: boolean;
   hint_key?: string;
@@ -185,25 +186,34 @@ export class App implements OnInit {
       : 'no comments awaiting your reply';
   }
 
-  ciIcon(failures: number | undefined, pending: number | undefined): string {
+  ciIcon(failures: number | undefined, pending: number | undefined,
+         expected: number | undefined): string {
     if (failures === undefined || failures === null) return '';
-    if (failures > 0) return `✗ ${failures}`;
+    const parts: string[] = [];
+    if (failures > 0) parts.push(`✗ ${failures}`);
+    if (expected && expected > 0) parts.push(`⏳ ${expected}`);
+    if (parts.length) return parts.join('  ');
     if (pending && pending > 0) return '…';
     return '✓';
   }
 
-  ciClass(failures: number | undefined, pending: number | undefined): string {
+  ciClass(failures: number | undefined, pending: number | undefined,
+          expected: number | undefined): string {
     if (failures === undefined || failures === null) return 'ci';
     if (failures > 0) return 'ci bad';
+    if (expected && expected > 0) return 'ci exp';
     if (pending && pending > 0) return 'ci pend';
     return 'ci ok';
   }
 
-  ciTitle(failures: number | undefined, pending: number | undefined): string {
+  ciTitle(failures: number | undefined, pending: number | undefined,
+          expected: number | undefined): string {
     if (failures === undefined || failures === null) return '';
-    if (failures > 0) return `${failures} failing CI check(s)`;
-    if (pending && pending > 0) return `${pending} CI check(s) still running`;
-    return 'all CI checks passing';
+    const bits: string[] = [];
+    if (failures > 0) bits.push(`${failures} failing check(s)`);
+    if (expected && expected > 0) bits.push(`${expected} required check(s) not started yet`);
+    if (pending && pending > 0) bits.push(`${pending} check(s) running`);
+    return bits.length ? bits.join('; ') : 'all CI checks passing';
   }
 
   // run_ts is stored UTC as "YYYY-MM-DDTHH:MM:SSZ" -> "YYYY-MM-DD HH:MM UTC".

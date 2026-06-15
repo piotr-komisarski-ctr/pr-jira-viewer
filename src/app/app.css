@@ -79,5 +79,6 @@ a.l:hover { text-decoration: underline; }
 
 .ci { font-size: 12px; font-weight: 700; white-space: nowrap; }
 .ci.bad { color: #dc2626; }
+.ci.exp { color: #b45309; }
 .ci.pend { color: #9ca3af; }
 .ci.ok { color: #16a34a; }
