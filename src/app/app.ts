@@ -31,6 +31,7 @@ interface RowDoc {
   pr_ci_expected?: number;
   pr_approved_by?: string;
   pr_review_decision?: string;
+  pr_behind?: number;
   source?: string;
   possible_parent?: boolean;
   hint_key?: string;
@@ -241,6 +242,22 @@ export class App implements OnInit {
     if (approvedBy) bits.push(`approved by ${approvedBy.split(',').join(', ')}`);
     if (decision) bits.push(`review decision: ${decision}`);
     return bits.join('; ');
+  }
+
+  behindLabel(n: number | undefined): string {
+    return n === undefined || n === null ? '' : String(n);
+  }
+
+  behindClass(n: number | undefined): string {
+    if (n === undefined || n === null) return 'bh';
+    if (n >= 30) return 'bh bad';
+    if (n > 0) return 'bh warn';
+    return 'bh ok';
+  }
+
+  behindTitle(n: number | undefined): string {
+    return n === undefined || n === null
+      ? '' : `${n} commit(s) behind the target branch`;
   }
 
   // run_ts is stored UTC as "YYYY-MM-DDTHH:MM:SSZ" -> "YYYY-MM-DD HH:MM UTC".
