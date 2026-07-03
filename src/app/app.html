@@ -28,6 +28,7 @@
       <span class="updated">Last export: <b>{{ formatExportTs(runTs) }}</b></span>
       <span class="spacer"></span>
       <span class="pill">Matched <b>{{ matched.length }}</b></span>
+      <span class="pill">PR done, Jira open <b>{{ doneNotClosed.length }}</b></span>
       <span class="pill">Jira without PR <b>{{ jiraOnly.length }}</b></span>
       <span class="pill">PRs without Jira <b>{{ prOnly.length }}</b></span>
       <span class="pill">Open PRs <b>{{ openPrCount }}</b></span>
@@ -67,6 +68,31 @@
               <td><span [class]="ciClass(r.pr_ci_failures, r.pr_ci_pending, r.pr_ci_expected)" [title]="ciTitle(r.pr_ci_failures, r.pr_ci_pending, r.pr_ci_expected)">{{ ciIcon(r.pr_ci_failures, r.pr_ci_pending, r.pr_ci_expected) }}</span></td>
               <td><span [class]="approvedClass(r.pr_approved_by, r.pr_review_decision)" [title]="approvedTitle(r.pr_approved_by, r.pr_review_decision)">{{ approvedIcon(r.pr_approved_by, r.pr_review_decision) }}</span></td>
               <td><span [class]="behindClass(r.pr_behind)" [title]="behindTitle(r.pr_behind)">{{ behindLabel(r.pr_behind) }}</span></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+
+    <section class="sec">
+      <h2>🧹 PR merged/closed — Jira still open <span class="cnt">{{ doneNotClosed.length }}</span></h2>
+      <table class="t">
+        <thead>
+          <tr><th>Jira</th><th>Type</th><th>Status</th><th>Title</th><th>PR</th><th>PR state</th></tr>
+        </thead>
+        <tbody>
+          @for (r of doneNotClosed; track r.jira_key + (r.pr_url ?? '')) {
+            <tr>
+              <td><a class="l" [href]="jiraUrl(r.jira_key)" target="_blank" rel="noopener">{{ r.jira_key }}</a></td>
+              <td>{{ r.jira_type }}</td>
+              <td><span [class]="statusClass(r.jira_status)">{{ r.jira_status }}</span></td>
+              <td class="wrap">{{ r.jira_summary }}</td>
+              <td>
+                @if (r.pr_url) {
+                  <a class="l" [href]="r.pr_url" target="_blank" rel="noopener">{{ prLabel(r) }}</a>
+                }
+              </td>
+              <td><span [class]="prStateClass(r.pr_state)">{{ prStateLabel(r.pr_state) }}</span></td>
             </tr>
           }
         </tbody>

@@ -57,6 +57,7 @@ export class App implements OnInit {
   selectedPerson = '';
 
   matched: RowDoc[] = [];
+  doneNotClosed: RowDoc[] = [];
   jiraOnly: RowDoc[] = [];
   prOnly: RowDoc[] = [];
   runTs = '';
@@ -120,12 +121,17 @@ export class App implements OnInit {
     const entry = this.persons.find((p) => p.person === this.selectedPerson);
     if (!entry) return;
     // Defensive: only the rows from the latest run of that person.
-    // Merged/closed PRs are noise here — the page tracks live work only.
-    const docs = entry.docs.filter(
-      (d) => d.run_ts === entry.runTs && d.pr_state !== 'MERGED-OR-CLOSED');
+    const docs = entry.docs.filter((d) => d.run_ts === entry.runTs);
     const byKey = (a: RowDoc, b: RowDoc) =>
       (a.jira_key ?? '').localeCompare(b.jira_key ?? '');
-    this.matched = docs.filter((d) => d.row_kind === 'matched').sort(byKey);
+    // Matched shows live work only; a merged/closed PR on a still-open Jira
+    // goes to its own "close the ticket?" section instead.
+    this.matched = docs
+      .filter((d) => d.row_kind === 'matched' && d.pr_state !== 'MERGED-OR-CLOSED')
+      .sort(byKey);
+    this.doneNotClosed = docs
+      .filter((d) => d.row_kind === 'matched' && d.pr_state === 'MERGED-OR-CLOSED')
+      .sort(byKey);
     this.jiraOnly = docs.filter((d) => d.row_kind === 'jira_only').sort(byKey);
     this.prOnly = docs
       .filter((d) => d.row_kind === 'pr_only')
