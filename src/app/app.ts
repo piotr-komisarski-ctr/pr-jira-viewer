@@ -120,7 +120,9 @@ export class App implements OnInit {
     const entry = this.persons.find((p) => p.person === this.selectedPerson);
     if (!entry) return;
     // Defensive: only the rows from the latest run of that person.
-    const docs = entry.docs.filter((d) => d.run_ts === entry.runTs);
+    // Merged/closed PRs are noise here — the page tracks live work only.
+    const docs = entry.docs.filter(
+      (d) => d.run_ts === entry.runTs && d.pr_state !== 'MERGED-OR-CLOSED');
     const byKey = (a: RowDoc, b: RowDoc) =>
       (a.jira_key ?? '').localeCompare(b.jira_key ?? '');
     this.matched = docs.filter((d) => d.row_kind === 'matched').sort(byKey);
