@@ -63,6 +63,8 @@ h2 {
   background: var(--track); }
 .legend .dot.merged { background: var(--good); }
 .legend .dot.flight { background: var(--flight); }
+.statline { margin-top: 12px; padding-top: 10px; font-size: 13px;
+  color: var(--text-2); border-top: 1px solid var(--border); }
 /* chips */
 .chip {
   display: inline-block; font-size: 12px; font-weight: 600;
@@ -162,6 +164,7 @@ function render(d) {
       <td>${x.item}</td>
       <td class="nowrap">${jiraChip(x.jira)}</td>
       <td class="nowrap">${prChip(x.pr)}</td>
+      <td class="nowrap">${x.removes ? `−${x.removes.refs} refs · −${x.removes.files} files` : ''}</td>
       <td class="nowrap">${stateChip(x.state)}</td>
       <td>${x.notes}</td>
     </tr>`).join('');
@@ -187,6 +190,10 @@ function render(d) {
         <span><span class="dot flight"></span>in flight (${p.in_flight})</span>
         <span><span class="dot"></span>planned (${planned})</span>
       </div>
+      ${d.stats ? `<div class="statline">Static call sites remaining
+        (<code>${esc(d.stats.symbol)}</code>, src/main @ ${esc(d.stats.ref)}):
+        <strong>${d.stats.refs} references in ${d.stats.files} files</strong>
+        — open PRs remove ${d.stats.pending_refs} refs / free ${d.stats.pending_files} files</div>` : ''}
     </div>
 
     <h2>What &amp; why</h2>
@@ -207,7 +214,7 @@ function render(d) {
     <h2>Work plan</h2>
     <div class="card tablewrap">
       <table>
-        <thead><tr><th>Work item</th><th>Jira</th><th>PR</th><th>State</th><th>Notes</th></tr></thead>
+        <thead><tr><th>Work item</th><th>Jira</th><th>PR</th><th>Removes</th><th>State</th><th>Notes</th></tr></thead>
         <tbody>${work}</tbody>
       </table>
     </div>
