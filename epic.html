@@ -66,6 +66,8 @@ h2 {
 .legend .dot.flight { background: var(--flight); }
 .statline { margin-top: 12px; padding-top: 10px; font-size: 13px;
   color: var(--text-2); border-top: 1px solid var(--border); }
+.scopebar { height: 10px; margin-top: 8px; }
+.scopenote { margin-top: 8px; }
 .doc { display: flex; align-items: center; gap: 14px; margin-top: 14px;
   background: var(--card); border: 1px solid var(--border);
   border-left: 4px solid var(--flight); border-radius: 10px;
@@ -218,10 +220,24 @@ function render(d) {
         <span><span class="dot flight"></span>in flight (${p.in_flight})</span>
         <span><span class="dot"></span>planned (${planned})</span>
       </div>
-      ${d.stats ? `<div class="statline">Static call sites remaining
-        (<code>${esc(d.stats.symbol)}</code>, src/main @ ${esc(d.stats.ref)}):
-        <strong>${d.stats.refs} references in ${d.stats.files} files</strong>
-        — open PRs remove ${d.stats.pending_refs} refs / free ${d.stats.pending_files} files</div>` : ''}
+      ${d.stats ? `<div class="statline">
+        <div>Static call sites (<code>${esc(d.stats.symbol)}</code>, src/main @ ${esc(d.stats.ref)}):
+          <strong>${d.stats.refs} references in ${d.stats.files} files</strong> repo-wide —
+          but the epic's denominator is only the external-module slice:</div>
+        <div class="meter scopebar" role="img"
+             aria-label="epic scope ${d.stats.scope_files} files, out of scope ${d.stats.out_files} files">
+          <div class="seg flight" style="width:${(100 * d.stats.scope_files / (d.stats.files || 1)).toFixed(1)}%"></div>
+        </div>
+        <div class="legend">
+          <span><span class="dot flight"></span><strong>epic scope</strong> — external modules:
+            ${d.stats.scope_files} files / ${d.stats.scope_refs} refs</span>
+          <span><span class="dot"></span>${esc(d.stats.out_label)}:
+            ${d.stats.out_files} files / ${d.stats.out_refs} refs</span>
+        </div>
+        ${d.stats.scope_note ? `<div class="scopenote">${esc(d.stats.scope_note)}</div>` : ''}
+        <div class="scopenote">Open PRs currently remove <strong>${d.stats.pending_refs} refs</strong>
+          / free <strong>${d.stats.pending_files} files</strong> from the scope slice.</div>
+      </div>` : ''}
     </div>
 
     <h2>What &amp; why</h2>
