@@ -27,7 +27,7 @@ body {
   font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
         Helvetica, Arial, sans-serif;
 }
-main { max-width: 980px; margin: 0 auto; padding: 32px 20px 80px; }
+main { max-width: 1220px; margin: 0 auto; padding: 32px 16px 80px; }
 a { color: var(--link); text-decoration: none; }
 a:hover { text-decoration: underline; }
 code {
@@ -80,8 +80,8 @@ h2 {
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
 th { text-align: left; color: var(--text-3); font-size: 12px;
   text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;
-  padding: 8px 12px 6px; border-bottom: 1px solid var(--border); }
-td { padding: 9px 12px; border-bottom: 1px solid var(--border);
+  padding: 8px 10px 6px; border-bottom: 1px solid var(--border); }
+td { padding: 9px 10px; border-bottom: 1px solid var(--border);
   vertical-align: top; }
 tr:last-child td { border-bottom: none; }
 td.nowrap { white-space: nowrap; }
@@ -108,22 +108,24 @@ const key = new URLSearchParams(location.search).get('key') || 'AP-60260';
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
 
+function prState(pr) {
+  if (!pr) return null;
+  if (pr.state === 'MERGED') return {txt: 'merged', cls: 'good'};
+  if (pr.state === 'CLOSED') return {txt: 'closed', cls: 'bad'};
+  if (pr.state === 'OPEN') {
+    if (pr.draft) return {txt: 'draft', cls: ''};
+    if (pr.review === 'APPROVED') return {txt: 'approved', cls: 'good'};
+    if (pr.review === 'CHANGES_REQUESTED') return {txt: 'changes requested', cls: 'bad'};
+    return {txt: 'review pending', cls: 'flight'};
+  }
+  return {txt: pr.state.toLowerCase(), cls: ''};
+}
+
 function prChip(pr) {
   if (!pr) return '';
-  const label = '#' + pr.number;
-  let cls = '', txt = pr.state;
-  if (pr.state === 'MERGED') { cls = 'good'; }
-  else if (pr.state === 'OPEN') {
-    cls = 'flight';
-    txt = pr.draft ? 'DRAFT'
-        : pr.review === 'APPROVED' ? 'OPEN · approved'
-        : pr.review === 'CHANGES_REQUESTED' ? 'OPEN · changes requested'
-        : 'OPEN · review pending';
-    if (pr.review === 'CHANGES_REQUESTED') cls = 'bad';
-  }
-  else if (pr.state === 'CLOSED') { cls = 'bad'; }
-  return `<a href="${esc(pr.url)}" target="_blank" rel="noopener">` +
-         `<span class="chip ${cls}">${esc(label)} ${esc(txt)}</span></a>`;
+  const s = prState(pr);
+  return `<a href="${esc(pr.url)}" target="_blank" rel="noopener" title="${esc(pr.title || '')}">` +
+         `<span class="chip ${s.cls}">#${esc(pr.number)}</span></a>`;
 }
 
 function jiraChip(j) {
@@ -132,10 +134,15 @@ function jiraChip(j) {
          `<span class="chip">${esc(j.key)} · ${esc(j.status)}</span></a>`;
 }
 
-function stateChip(s) {
-  if (!s) return '';
-  const cls = s === 'merged' || s === 'done' ? 'good' : '';
-  return `<span class="chip ${cls}">${esc(s)}</span>`;
+function stateChip(row) {
+  const manual = row.state;
+  if (manual && manual !== 'merged') {
+    const cls = manual === 'done' ? 'good' : '';
+    return `<span class="chip ${cls}">${esc(manual)}</span>`;
+  }
+  const s = prState(row.pr);
+  if (!s) return manual ? `<span class="chip good">${esc(manual)}</span>` : '';
+  return `<span class="chip ${s.cls}">${esc(s.txt)}</span>`;
 }
 
 function decisionChip(s) {
@@ -165,7 +172,7 @@ function render(d) {
       <td class="nowrap">${jiraChip(x.jira)}</td>
       <td class="nowrap">${prChip(x.pr)}</td>
       <td class="nowrap">${x.removes ? `−${x.removes.refs} refs · −${x.removes.files} files` : ''}</td>
-      <td class="nowrap">${stateChip(x.state)}</td>
+      <td class="nowrap">${stateChip(x)}</td>
       <td>${x.notes}</td>
     </tr>`).join('');
 
