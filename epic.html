@@ -33,6 +33,7 @@ a:hover { text-decoration: underline; }
 code {
   font: 12.5px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
   background: var(--chip-bg); border-radius: 4px; padding: 1px 5px;
+  overflow-wrap: anywhere;
 }
 h1 { font-size: 26px; margin: 0 0 2px; letter-spacing: -0.02em; }
 h2 {
@@ -162,7 +163,7 @@ function render(d) {
       <td class="nowrap">${esc(x.date)}</td>
       <td>${x.text}</td>
       <td>${x.why}</td>
-      <td class="nowrap">${x.source}</td>
+      <td>${x.source}</td>
       <td class="nowrap">${decisionChip(x.status)}</td>
     </tr>`).join('');
 
