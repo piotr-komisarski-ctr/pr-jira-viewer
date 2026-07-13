@@ -66,6 +66,15 @@ h2 {
 .legend .dot.flight { background: var(--flight); }
 .statline { margin-top: 12px; padding-top: 10px; font-size: 13px;
   color: var(--text-2); border-top: 1px solid var(--border); }
+.doc { display: flex; align-items: center; gap: 14px; margin-top: 14px;
+  background: var(--card); border: 1px solid var(--border);
+  border-left: 4px solid var(--flight); border-radius: 10px;
+  padding: 12px 16px; color: var(--text); }
+.doc:hover { text-decoration: none; border-color: var(--flight); }
+.doc-icon { width: 34px; height: 34px; flex: none; color: var(--flight); }
+.doc-kicker { display: block; font-size: 12px; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--text-3); margin-bottom: 2px; }
+.doc strong { font-size: 17px; }
 /* chips */
 .chip {
   display: inline-block; font-size: 12px; font-weight: 600;
@@ -181,6 +190,17 @@ function render(d) {
     <p class="meta"><a href="${esc(d.jira_url)}" target="_blank" rel="noopener">${esc(d.key)}</a>
        · generated ${esc(gen)}</p>
     <h1>${esc(d.title)}</h1>
+    ${d.input_doc ? `
+    <a class="doc" href="${esc(d.input_doc)}" target="_blank" rel="noopener">
+      <svg class="doc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/>
+      </svg>
+      <span><span class="doc-kicker">Input analysis — the document this epic is based on</span>
+      <strong>${esc(d.input_doc_label || 'Analysis document')}</strong></span>
+    </a>` : ''}
 
     <h2>Progress</h2>
     <div class="card">
