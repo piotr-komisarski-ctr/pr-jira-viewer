@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Epic dashboard</title>
+<style>
+:root {
+  --surface: #fcfcfb; --card: #ffffff; --border: #e4e3df;
+  --text: #0b0b0b; --text-2: #52514e; --text-3: #8a8983;
+  --good: #0ca30c; --flight: #2a78d6; --serious: #c94a49;
+  --track: #ebeae6; --chip-bg: #f1f0ec;
+  --link: #1d5fb0;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #1a1a19; --card: #232322; --border: #3a3936;
+    --text: #ffffff; --text-2: #c3c2b7; --text-3: #8a8983;
+    --good: #0ca30c; --flight: #3987e5; --serious: #e66767;
+    --track: #33322f; --chip-bg: #2e2d2b;
+    --link: #6aabf2;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--surface); color: var(--text);
+  font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Helvetica, Arial, sans-serif;
+}
+main { max-width: 980px; margin: 0 auto; padding: 32px 20px 80px; }
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code {
+  font: 12.5px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--chip-bg); border-radius: 4px; padding: 1px 5px;
+}
+h1 { font-size: 26px; margin: 0 0 2px; letter-spacing: -0.02em; }
+h2 {
+  font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-3); margin: 36px 0 10px; font-weight: 600;
+}
+.sub { color: var(--text-2); margin: 0 0 4px; }
+.meta { color: var(--text-3); font-size: 13px; }
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px 18px;
+}
+/* progress meter */
+.meter-label { display: flex; justify-content: space-between;
+  align-items: baseline; margin-bottom: 8px; }
+.meter-label .big { font-size: 22px; font-weight: 700; }
+.meter { display: flex; height: 14px; border-radius: 4px;
+  background: var(--track); overflow: hidden; }
+.meter .seg { height: 100%; }
+.meter .seg + .seg, .meter .seg:first-child { border-right: 2px solid var(--card); }
+.meter .seg:last-child { border-right: none; }
+.seg.merged { background: var(--good); }
+.seg.flight { background: var(--flight); }
+.legend { display: flex; gap: 18px; margin-top: 10px; flex-wrap: wrap;
+  font-size: 13px; color: var(--text-2); }
+.legend .dot { display: inline-block; width: 9px; height: 9px;
+  border-radius: 50%; margin-right: 6px; vertical-align: 1px;
+  background: var(--track); }
+.legend .dot.merged { background: var(--good); }
+.legend .dot.flight { background: var(--flight); }
+/* chips */
+.chip {
+  display: inline-block; font-size: 12px; font-weight: 600;
+  border-radius: 999px; padding: 1.5px 9px; white-space: nowrap;
+  background: var(--chip-bg); color: var(--text-2);
+  border: 1px solid var(--border);
+}
+.chip.good   { color: var(--good); border-color: currentColor; background: transparent; }
+.chip.flight { color: var(--flight); border-color: currentColor; background: transparent; }
+.chip.bad    { color: var(--serious); border-color: currentColor; background: transparent; }
+/* tables (both generated .tablewrap and page-built) */
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th { text-align: left; color: var(--text-3); font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;
+  padding: 8px 12px 6px; border-bottom: 1px solid var(--border); }
+td { padding: 9px 12px; border-bottom: 1px solid var(--border);
+  vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+td.nowrap { white-space: nowrap; }
+.muted-row td { color: var(--text-3); }
+/* prose */
+.prose p { margin: 0 0 10px; }
+.prose ul { margin: 0 0 10px; padding-left: 22px; }
+.prose li { margin: 3px 0; }
+details.llm { border: 1px dashed var(--border); border-radius: 10px;
+  padding: 12px 18px; color: var(--text-2); }
+details.llm summary { cursor: pointer; font-weight: 600; color: var(--text); }
+details.llm[open] summary { margin-bottom: 10px; }
+.err { border-left: 3px solid var(--serious); padding: 10px 14px;
+  background: var(--card); border-radius: 6px; }
+</style>
+</head>
+<body>
+<main id="app"><p class="meta">Loading epic…</p></main>
+<script>
+const ES = 'https://vpc-dx-observer-dev-domain-4s3zhb3bgg2q4ki4qt4bnzad4m.us-east-1.es.amazonaws.com';
+const INDEX = 'epic-pages-1';
+const app = document.getElementById('app');
+const key = new URLSearchParams(location.search).get('key') || 'AP-60260';
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
+
+function prChip(pr) {
+  if (!pr) return '';
+  const label = '#' + pr.number;
+  let cls = '', txt = pr.state;
+  if (pr.state === 'MERGED') { cls = 'good'; }
+  else if (pr.state === 'OPEN') {
+    cls = 'flight';
+    txt = pr.draft ? 'DRAFT'
+        : pr.review === 'APPROVED' ? 'OPEN · approved'
+        : pr.review === 'CHANGES_REQUESTED' ? 'OPEN · changes requested'
+        : 'OPEN · review pending';
+    if (pr.review === 'CHANGES_REQUESTED') cls = 'bad';
+  }
+  else if (pr.state === 'CLOSED') { cls = 'bad'; }
+  return `<a href="${esc(pr.url)}" target="_blank" rel="noopener">` +
+         `<span class="chip ${cls}">${esc(label)} ${esc(txt)}</span></a>`;
+}
+
+function jiraChip(j) {
+  if (!j) return '';
+  return `<a href="${esc(j.url)}" target="_blank" rel="noopener">` +
+         `<span class="chip">${esc(j.key)} · ${esc(j.status)}</span></a>`;
+}
+
+function stateChip(s) {
+  if (!s) return '';
+  const cls = s === 'merged' || s === 'done' ? 'good' : '';
+  return `<span class="chip ${cls}">${esc(s)}</span>`;
+}
+
+function decisionChip(s) {
+  const active = /^activ/i.test(s);
+  return `<span class="chip ${active ? 'good' : ''}">${esc(s)}</span>`;
+}
+
+function render(d) {
+  document.title = d.key + ' — epic dashboard';
+  const p = d.progress || {merged: 0, in_flight: 0, total: 0, pct: 0};
+  const planned = Math.max(0, p.total - p.merged - p.in_flight);
+  const w = n => p.total ? (100 * n / p.total).toFixed(1) + '%' : '0%';
+  const gen = d.generated_at ? new Date(d.generated_at).toLocaleString() : '?';
+
+  const decisions = (d.decisions || []).map(x => `
+    <tr>
+      <td class="nowrap">${esc(x.date)}</td>
+      <td>${x.text}</td>
+      <td>${x.why}</td>
+      <td class="nowrap">${x.source}</td>
+      <td class="nowrap">${decisionChip(x.status)}</td>
+    </tr>`).join('');
+
+  const work = (d.work || []).map(x => `
+    <tr class="${x.state === 'deferred' ? 'muted-row' : ''}">
+      <td>${x.item}</td>
+      <td class="nowrap">${jiraChip(x.jira)}</td>
+      <td class="nowrap">${prChip(x.pr)}</td>
+      <td class="nowrap">${stateChip(x.state)}</td>
+      <td>${x.notes}</td>
+    </tr>`).join('');
+
+  app.innerHTML = `
+    <p class="meta"><a href="${esc(d.jira_url)}" target="_blank" rel="noopener">${esc(d.key)}</a>
+       · generated ${esc(gen)}</p>
+    <h1>${esc(d.title)}</h1>
+
+    <h2>Progress</h2>
+    <div class="card">
+      <div class="meter-label">
+        <span class="big">${p.merged} / ${p.total} merged (${p.pct}%)</span>
+        <span class="meta">${p.in_flight} in flight · ${planned} planned</span>
+      </div>
+      <div class="meter" role="img"
+           aria-label="${p.merged} of ${p.total} merged, ${p.in_flight} in flight">
+        ${p.merged ? `<div class="seg merged" style="width:${w(p.merged)}"></div>` : ''}
+        ${p.in_flight ? `<div class="seg flight" style="width:${w(p.in_flight)}"></div>` : ''}
+      </div>
+      <div class="legend">
+        <span><span class="dot merged"></span>merged (${p.merged})</span>
+        <span><span class="dot flight"></span>in flight (${p.in_flight})</span>
+        <span><span class="dot"></span>planned (${planned})</span>
+      </div>
+    </div>
+
+    <h2>What &amp; why</h2>
+    <div class="prose">${d.description_html || ''}</div>
+
+    <h2>Decisions &amp; agreements</h2>
+    <div class="card tablewrap">
+      <table>
+        <thead><tr><th>Date</th><th>Decision</th><th>Why</th><th>Source</th><th>Status</th></tr></thead>
+        <tbody>${decisions}</tbody>
+      </table>
+    </div>
+    ${d.decisions_extra_html ? `<div class="prose">${d.decisions_extra_html}</div>` : ''}
+
+    <h2>Open questions</h2>
+    <div class="prose">${d.open_questions_html || ''}</div>
+
+    <h2>Work plan</h2>
+    <div class="card tablewrap">
+      <table>
+        <thead><tr><th>Work item</th><th>Jira</th><th>PR</th><th>State</th><th>Notes</th></tr></thead>
+        <tbody>${work}</tbody>
+      </table>
+    </div>
+
+    <h2>For LLMs</h2>
+    <details class="llm">
+      <summary>Machine context — patterns, pitfalls, claims (read before working a subtask)</summary>
+      <div class="prose">${d.llm_html || ''}</div>
+    </details>`;
+}
+
+fetch(`${ES}/${INDEX}/_search`, {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({query: {ids: {values: [key]}}, size: 1}),
+})
+.then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+.then(j => {
+  const hit = (j.hits && j.hits.hits && j.hits.hits[0]) || null;
+  if (!hit) {
+    app.innerHTML = `<div class="err"><strong>No epic '${esc(key)}' found.</strong>
+      Push it with <code>python3 epic_page.py ${esc(key)}</code>.</div>`;
+    return;
+  }
+  render(hit._source);
+})
+.catch(e => {
+  app.innerHTML = `<div class="err"><strong>Could not reach the data index
+    (${esc(e.message)}).</strong> The data lives on DXO dev — are you on VPN?</div>`;
+});
+</script>
+</body>
+</html>
