@@ -38,7 +38,7 @@
       <h2>✅ Matched <span class="cnt">{{ matched.length }}</span></h2>
       <table class="t">
         <thead>
-          <tr><th>Jira</th><th>Type</th><th>Status</th><th>Title</th><th>PR</th><th>PR state</th><th>Mergeable</th><th>Reply?</th><th>CI</th><th>Approved</th><th>Behind</th></tr>
+          <tr><th>Jira</th><th>Type</th><th>Status</th><th>Reviewer</th><th>Title</th><th>PR</th><th>PR state</th><th>Mergeable</th><th>Reply?</th><th>CI</th><th>Approved</th><th>Behind</th></tr>
         </thead>
         <tbody>
           @for (r of matched; track r.jira_key + (r.pr_url ?? '')) {
@@ -46,6 +46,7 @@
               <td><a class="l" [href]="jiraUrl(r.jira_key)" target="_blank" rel="noopener">{{ r.jira_key }}</a></td>
               <td>{{ r.jira_type }}</td>
               <td><span [class]="statusClass(r.jira_status)">{{ r.jira_status }}</span></td>
+              <td><span [class]="reviewerClass(r.jira_reviewers)" [title]="reviewerTitle(r.jira_reviewers)">{{ reviewerIcon(r.jira_reviewers) }}</span></td>
               <td class="wrap">{{ r.jira_summary }}</td>
               <td>
                 @if (r.pr_url) {

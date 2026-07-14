@@ -91,3 +91,7 @@ a.l:hover { text-decoration: underline; }
 .bh.bad { color: #dc2626; }
 .bh.warn { color: #b45309; }
 .bh.ok { color: #9ca3af; }
+
+.rv { font-size: 12px; white-space: nowrap; }
+.rv.ok { color: #16a34a; }
+.rv.bad { color: #dc2626; font-weight: 600; }

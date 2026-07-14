@@ -17,6 +17,7 @@ interface RowDoc {
   jira_type?: string;
   jira_status?: string;
   jira_summary?: string;
+  jira_reviewers?: string;
   pr_url?: string;
   pr_number?: number;
   pr_repo?: string;
@@ -250,6 +251,18 @@ export class App implements OnInit {
     if (approvedBy) bits.push(`approved by ${approvedBy.split(',').join(', ')}`);
     if (decision) bits.push(`review decision: ${decision}`);
     return bits.join('; ');
+  }
+
+  reviewerIcon(r: string | undefined): string {
+    return r ? `✓ ${r.split(',')[0]}` : '✗ brak reviewera';
+  }
+
+  reviewerClass(r: string | undefined): string {
+    return r ? 'rv ok' : 'rv bad';
+  }
+
+  reviewerTitle(r: string | undefined): string {
+    return r ? `Jira Reviewers: ${r}` : 'no Reviewers set on the Jira ticket — it will NOT appear on the review board (filter 34322)';
   }
 
   behindLabel(n: number | undefined): string {
