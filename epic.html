@@ -8,7 +8,7 @@
 :root {
   --surface: #fcfcfb; --card: #ffffff; --border: #e4e3df;
   --text: #0b0b0b; --text-2: #52514e; --text-3: #8a8983;
-  --good: #0ca30c; --flight: #2a78d6; --serious: #c94a49;
+  --good: #0ca30c; --appr: #1baf7a; --flight: #2a78d6; --serious: #c94a49;
   --track: #ebeae6; --chip-bg: #f1f0ec;
   --link: #1d5fb0;
 }
@@ -16,7 +16,7 @@
   :root {
     --surface: #1a1a19; --card: #232322; --border: #3a3936;
     --text: #ffffff; --text-2: #c3c2b7; --text-3: #8a8983;
-    --good: #0ca30c; --flight: #3987e5; --serious: #e66767;
+    --good: #0ca30c; --appr: #199e70; --flight: #3987e5; --serious: #e66767;
     --track: #33322f; --chip-bg: #2e2d2b;
     --link: #6aabf2;
   }
@@ -56,6 +56,7 @@ h2 {
 .meter .seg + .seg, .meter .seg:first-child { border-right: 2px solid var(--card); }
 .meter .seg:last-child { border-right: none; }
 .seg.merged { background: var(--good); }
+.seg.appr { background: var(--appr); }
 .seg.flight { background: var(--flight); }
 .legend { display: flex; gap: 18px; margin-top: 10px; flex-wrap: wrap;
   font-size: 13px; color: var(--text-2); }
@@ -63,6 +64,7 @@ h2 {
   border-radius: 50%; margin-right: 6px; vertical-align: 1px;
   background: var(--track); }
 .legend .dot.merged { background: var(--good); }
+.legend .dot.appr { background: var(--appr); }
 .legend .dot.flight { background: var(--flight); }
 .statline { margin-top: 12px; padding-top: 10px; font-size: 13px;
   color: var(--text-2); border-top: 1px solid var(--border); }
@@ -164,8 +166,9 @@ function decisionChip(s) {
 
 function render(d) {
   document.title = d.key + ' — epic dashboard';
-  const p = d.progress || {merged: 0, in_flight: 0, total: 0, pct: 0};
-  const planned = Math.max(0, p.total - p.merged - p.in_flight);
+  const p = d.progress || {merged: 0, approved: 0, in_flight: 0, total: 0, pct: 0};
+  const appr = p.approved || 0;
+  const planned = Math.max(0, p.total - p.merged - appr - p.in_flight);
   const w = n => p.total ? (100 * n / p.total).toFixed(1) + '%' : '0%';
   const gen = d.generated_at ? new Date(d.generated_at).toLocaleString() : '?';
 
@@ -208,15 +211,17 @@ function render(d) {
     <div class="card">
       <div class="meter-label">
         <span class="big">${p.merged} / ${p.total} merged (${p.pct}%)</span>
-        <span class="meta">${p.in_flight} in flight · ${planned} planned</span>
+        <span class="meta">${appr} approved · ${p.in_flight} in flight · ${planned} planned</span>
       </div>
       <div class="meter" role="img"
-           aria-label="${p.merged} of ${p.total} merged, ${p.in_flight} in flight">
+           aria-label="${p.merged} of ${p.total} merged, ${appr} approved, ${p.in_flight} in flight">
         ${p.merged ? `<div class="seg merged" style="width:${w(p.merged)}"></div>` : ''}
+        ${appr ? `<div class="seg appr" style="width:${w(appr)}"></div>` : ''}
         ${p.in_flight ? `<div class="seg flight" style="width:${w(p.in_flight)}"></div>` : ''}
       </div>
       <div class="legend">
         <span><span class="dot merged"></span>merged (${p.merged})</span>
+        <span><span class="dot appr"></span>approved (${appr})</span>
         <span><span class="dot flight"></span>in flight (${p.in_flight})</span>
         <span><span class="dot"></span>planned (${planned})</span>
       </div>
