@@ -171,6 +171,16 @@ function decisionChip(s) {
   return `<span class="chip ${active ? 'good' : ''}">${esc(s)}</span>`;
 }
 
+function nowChip(s) {
+  if (!s) return '';
+  const t = s.replace(/<[^>]*>/g, '');       // chip text is plain
+  if (/^(—|-)$/.test(t)) return `<span class="meta">${esc(t)}</span>`;
+  let cls = 'flight';                        // conditional (“after …”, “partly”)
+  if (/^(yes|done|tak)/i.test(t)) cls = 'good';
+  else if (/^(no|nie)\b/i.test(t)) cls = 'bad';
+  return `<span class="chip ${cls}">${esc(t)}</span>`;
+}
+
 function render(d) {
   document.title = d.key + ' — epic dashboard';
   const p = d.progress || {merged: 0, approved: 0, in_flight: 0, total: 0, pct: 0};
@@ -190,6 +200,7 @@ function render(d) {
 
   const hasRemoves = (d.work || []).some(x => x.removes);
   const hasEst = (d.work || []).some(x => x.est);
+  const hasNow = (d.work || []).some(x => x.now);
   const work = (d.work || []).map(x => `
     <tr class="${x.state === 'deferred' ? 'muted-row' : ''}">
       <td>${x.item}</td>
@@ -198,6 +209,7 @@ function render(d) {
       ${hasRemoves ? `<td class="nowrap">${x.removes ? `−${x.removes.refs} refs · −${x.removes.files} files` : ''}</td>` : ''}
       <td class="nowrap">${stateChip(x)}</td>
       ${hasEst ? `<td class="nowrap">${x.est || ''}</td>` : ''}
+      ${hasNow ? `<td>${nowChip(x.now)}</td>` : ''}
       <td>${x.notes}</td>
     </tr>`).join('');
 
@@ -277,7 +289,7 @@ function render(d) {
     <h2>Work plan</h2>
     <div class="card tablewrap">
       <table>
-        <thead><tr><th>Work item</th><th>Jira</th><th>PR</th>${hasRemoves ? '<th>Removes</th>' : ''}<th>State</th>${hasEst ? '<th>Est</th>' : ''}<th>Notes</th></tr></thead>
+        <thead><tr><th>Work item</th><th>Jira</th><th>PR</th>${hasRemoves ? '<th>Removes</th>' : ''}<th>State</th>${hasEst ? '<th>Est</th>' : ''}${hasNow ? '<th>On 6.2 now</th>' : ''}<th>Notes</th></tr></thead>
         <tbody>${work}</tbody>
       </table>
     </div>
