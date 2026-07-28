@@ -33,6 +33,8 @@ interface RowDoc {
   pr_approved_by?: string;
   pr_review_decision?: string;
   pr_behind?: number;
+  pr_certified?: string;        // 'yes' | 'stale' | 'no'
+  pr_certified_sha?: string;
   source?: string;
   possible_parent?: boolean;
   hint_key?: string;
@@ -279,6 +281,32 @@ export class App implements OnInit {
   behindTitle(n: number | undefined): string {
     return n === undefined || n === null
       ? '' : `${n} commit(s) behind the target branch`;
+  }
+
+  // CI certification is manual and bound to a specific commit: the
+  // appian-ci-analyzer bot posts "Certifying commit <sha>". A force-push
+  // leaves the certificate pointing at an older commit -> 'stale'.
+  certIcon(state: string | undefined): string {
+    if (state === 'yes') return '✅';
+    if (state === 'stale') return '♻️';
+    if (state === 'no') return '❌';
+    return '';
+  }
+
+  certClass(state: string | undefined): string {
+    if (state === 'yes') return 'cert ok';
+    if (state === 'stale') return 'cert warn';
+    if (state === 'no') return 'cert bad';
+    return 'cert';
+  }
+
+  certTitle(state: string | undefined, sha: string | undefined): string {
+    if (state === 'yes') return 'CI certified for the current head';
+    if (state === 'stale') {
+      return `Certification is stale - it covers ${sha ?? '?'}, not the current head. Re-certify after the push.`;
+    }
+    if (state === 'no') return 'Not certified yet (manual step)';
+    return '';
   }
 
   // run_ts is stored UTC as "YYYY-MM-DDTHH:MM:SSZ" -> "YYYY-MM-DD HH:MM UTC".
