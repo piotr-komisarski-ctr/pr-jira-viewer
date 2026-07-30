@@ -18,8 +18,8 @@ interface RowDoc {
   jira_status?: string;
   jira_summary?: string;
   jira_reviewers?: string;
-  jira_epic_key?: string;
-  jira_epic_title?: string;
+  jira_parent_key?: string;
+  jira_parent_title?: string;
   pr_url?: string;
   pr_number?: number;
   pr_repo?: string;
@@ -149,12 +149,12 @@ export class App implements OnInit {
     return key ? JIRA_BROWSE + key : '';
   }
 
-  // The epic is resolved server-side by walking the parent chain up to the
-  // issue whose type is Epic (a subtask's own parent is usually a Story).
-  // The cell shows the title; the key lives in the tooltip and the link.
-  epicTooltip(d: RowDoc): string {
-    if (!d.jira_epic_key) return '';
-    return `${d.jira_epic_key}: ${d.jira_epic_title ?? ''}`;
+  // One hop up the Jira tree, resolved server-side: a subtask shows its
+  // Story, a Story shows its Epic. The cell shows the title; the key
+  // lives in the tooltip and the link.
+  parentTooltip(d: RowDoc): string {
+    if (!d.jira_parent_key) return '';
+    return `${d.jira_parent_key}: ${d.jira_parent_title ?? ''}`;
   }
 
   prLabel(d: RowDoc): string {

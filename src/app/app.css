@@ -51,9 +51,9 @@ table.t { width: 100%; border-collapse: collapse; font-size: 12.5px; }
 }
 .t td { padding: 6px 8px; border-bottom: 1px solid #f3f4f6; white-space: nowrap; }
 .t td.wrap { white-space: normal; color: #4b5563; }
-/* Epic titles are long; clip them and let the tooltip carry key + full text. */
-.t td.epic { max-width: 210px; overflow: hidden; text-overflow: ellipsis; }
-.t td.epic a.l { font-weight: 500; color: #4338ca; }
+/* Parent titles are long; clip them and let the tooltip carry key + full text. */
+.t td.parent { max-width: 210px; overflow: hidden; text-overflow: ellipsis; }
+.t td.parent a.l { font-weight: 500; color: #4338ca; }
 .t tbody tr:hover td { background: #f9fafb; }
 
 a.l { color: #2563eb; text-decoration: none; font-weight: 600; }
