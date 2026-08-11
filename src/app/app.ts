@@ -270,14 +270,24 @@ export class App implements OnInit {
     if (!names.length) {
       return '✗ brak reviewera';
     }
-    // Only the first name is spelled out - the rest would not fit the column.
-    // The count keeps a second reviewer from disappearing; the tooltip has the
-    // full list.
-    return names.length === 1 ? `✓ ${names[0]}` : `✓ ${names[0]} +${names.length - 1}`;
+    // Everyone on the field is shown, as initials - seven full names do not fit
+    // the column, and how many people are on the ticket is the point of it.
+    // The tooltip spells them out.
+    return `✓ ${names.map(n => this.initials(n)).join(' ')}`;
   }
 
   private reviewerNames(r: string | undefined): string[] {
     return (r ?? '').split(',').map(n => n.trim()).filter(n => n.length > 0);
+  }
+
+  private initials(name: string): string {
+    const words = name.split(/\s+/).filter(w => w.length > 0);
+    if (!words.length) {
+      return '';
+    }
+    const first = words[0][0];
+    // First and last word only: "Muthu Palaniyappan Ol" reads as MO, not MPO.
+    return (words.length === 1 ? first : first + words[words.length - 1][0]).toUpperCase();
   }
 
   reviewerClass(r: string | undefined): string {
