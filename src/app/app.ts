@@ -268,7 +268,7 @@ export class App implements OnInit {
   reviewerIcon(r: string | undefined): string {
     const names = this.reviewerNames(r);
     if (!names.length) {
-      return '✗ brak reviewera';
+      return '✗ no reviewer';
     }
     // Everyone on the field is shown, as initials - seven full names do not fit
     // the column, and how many people are on the ticket is the point of it.
