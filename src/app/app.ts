@@ -266,7 +266,18 @@ export class App implements OnInit {
   }
 
   reviewerIcon(r: string | undefined): string {
-    return r ? `✓ ${r.split(',')[0]}` : '✗ brak reviewera';
+    const names = this.reviewerNames(r);
+    if (!names.length) {
+      return '✗ brak reviewera';
+    }
+    // Only the first name is spelled out - the rest would not fit the column.
+    // The count keeps a second reviewer from disappearing; the tooltip has the
+    // full list.
+    return names.length === 1 ? `✓ ${names[0]}` : `✓ ${names[0]} +${names.length - 1}`;
+  }
+
+  private reviewerNames(r: string | undefined): string[] {
+    return (r ?? '').split(',').map(n => n.trim()).filter(n => n.length > 0);
   }
 
   reviewerClass(r: string | undefined): string {
