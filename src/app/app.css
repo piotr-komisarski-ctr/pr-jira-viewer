@@ -68,6 +68,7 @@ a.l:hover { text-decoration: underline; }
 .c.bl { background: #f3f4f6; color: #4b5563; }
 .c.open { background: #dbeafe; color: #1e40af; }
 .c.mrg { background: #ede9fe; color: #5b21b6; }
+.c.dft { background: #fee2e2; color: #991b1b; }
 
 .warn { color: #b45309; font-size: 12px; margin-left: 4px; cursor: help; }
 

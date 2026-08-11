@@ -142,7 +142,7 @@ export class App implements OnInit {
       .filter((d) => d.row_kind === 'pr_only')
       .sort((a, b) => (a.pr_number ?? 0) - (b.pr_number ?? 0));
     this.runTs = entry.runTs;
-    this.openPrCount = docs.filter((d) => d.pr_state === 'OPEN').length;
+    this.openPrCount = docs.filter((d) => d.pr_state === 'OPEN' || d.pr_state === 'DRAFT').length;
   }
 
   jiraUrl(key: string | undefined): string {
@@ -172,6 +172,8 @@ export class App implements OnInit {
 
   prStateClass(state: string | undefined): string {
     if (state === 'OPEN') return 'c open';
+    // Red: a draft is open but invisible to reviewers, so it is not progress.
+    if (state === 'DRAFT') return 'c dft';
     if (state === 'MERGED-OR-CLOSED') return 'c mrg';
     return 'c bl';
   }
